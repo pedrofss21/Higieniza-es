@@ -60,19 +60,50 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
   const dados = registros.filter(r => r.data.startsWith(mes));
   if (dados.length === 0) return alert('Nenhum registro nesse mês.');
 
-  const pdf = new jsPDF();
-  pdf.setFontSize(16);
-  pdf.text(`Higienizações - ${mes}`, 10, 15);
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  // Título
+  pdf.setFontSize(18);
+  pdf.text(`Higienizações - ${mes}`, 105, 20, { align: 'center' });
+
+  // Espaço antes da tabela
   pdf.setFontSize(12);
+  pdf.text(`Relatório de serviços do mês ${mes}`, 14, 30);
 
-  let y = 25;
-  pdf.text('DATA     SERVIÇO          MODELO        PLACA/CHASSI', 10, y);
-  y += 8;
+  // Montar tabela
+  const colunas = ["Data", "Serviço", "Modelo", "Placa/Chassi"];
+  const linhas = dados.map(r => [r.data, r.servico, r.modelo, r.placa]);
 
-  dados.forEach(r => {
-    pdf.text(`${r.data}   ${r.servico}   ${r.modelo}   ${r.placa}`, 10, y);
-    y += 8;
+  pdf.autoTable({
+    startY: 35,
+    head: [colunas],
+    body: linhas,
+    theme: 'grid',
+    styles: {
+      fontSize: 11,
+      cellPadding: 3,
+      valign: 'middle'
+    },
+    headStyles: {
+      fillColor: [40, 116, 240], // azul
+      textColor: 255,
+      halign: 'center'
+    },
+    bodyStyles: {
+      halign: 'center'
+    },
+    columnStyles: {
+      0: { cellWidth: 30 },
+      1: { cellWidth: 60 },
+      2: { cellWidth: 35 },
+      3: { cellWidth: 50 }
+    }
   });
+
+  // Rodapé
+  const dataAtual = new Date().toLocaleDateString('pt-BR');
+  pdf.setFontSize(10);
+  pdf.text(`Gerado em ${dataAtual}`, 14, pdf.internal.pageSize.height - 10);
 
   pdf.save(`higienizacoes-${mes}.pdf`);
 });
