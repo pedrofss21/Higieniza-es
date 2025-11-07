@@ -37,6 +37,32 @@ table {
   border-collapse: collapse;
   margin-top: 10px;
 }
+.delete-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+}
+
+.clear-btn {
+  background: #555;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  background: #333;
+}
 th, td {
   border: 1px solid #ddd;
   padding: 8px;
