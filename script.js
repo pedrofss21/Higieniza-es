@@ -9,16 +9,33 @@ function salvarLocal() {
   localStorage.setItem('registros', JSON.stringify(registros));
 }
 
-function atualizarTabela(filtroMes=null) {
+function atualizarTabela(filtroMes = null) {
   tabela.innerHTML = '';
+
   const filtrados = filtroMes
     ? registros.filter(r => r.data.startsWith(filtroMes))
     : registros;
 
-  filtrados.forEach(r => {
+  filtrados.forEach((r, index) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${r.data}</td><td>${r.servico}</td><td>${r.modelo}</td><td>${r.placa}</td>`;
+    tr.innerHTML = `
+      <td>${r.data}</td>
+      <td>${r.servico}</td>
+      <td>${r.modelo}</td>
+      <td>${r.placa}</td>
+      <td><button class="delete-btn" data-index="${index}">🗑️</button></td>
+    `;
     tabela.appendChild(tr);
+  });
+
+  // adiciona evento aos botões de exclusão
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const index = e.target.getAttribute('data-index');
+      registros.splice(index, 1);
+      salvarLocal();
+      atualizarTabela(filtroMes);
+    });
   });
 }
 
@@ -59,5 +76,22 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
 
   pdf.save(`higienizacoes-${mes}.pdf`);
 });
+
+document.getElementById('mesSelecionado').addEventListener('change', () => {
+  atualizarTabela(mesSelecionado.value);
+});
+
+// botão para apagar tudo
+const btnApagarTudo = document.createElement('button');
+btnApagarTudo.textContent = '🧹 Apagar tudo';
+btnApagarTudo.className = 'clear-btn';
+btnApagarTudo.addEventListener('click', () => {
+  if (confirm('Tem certeza que deseja apagar todos os registros?')) {
+    registros = [];
+    salvarLocal();
+    atualizarTabela();
+  }
+});
+document.querySelector('.acoes').appendChild(btnApagarTudo);
 
 atualizarTabela();
