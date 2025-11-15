@@ -1,137 +1,122 @@
+/* Geral */
 body {
   font-family: Arial, sans-serif;
   background: #f4f4f4;
   margin: 0;
-  padding: 20px;
+  padding: 0;
 }
+
 .container {
-  max-width: 900px;
+  width: 95%;
   margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  max-width: 540px;
 }
-form {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  margin-bottom: 15px;
+
+h1 {
+  text-align: center;
+  margin-top: 15px;
 }
-input, select, button {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-button {
-  background: #007BFF;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-button:hover {
-  background: #0056b3;
-}
-table {
+
+/* Botão tema */
+.theme-btn {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-.delete-btn {
-  background: #e74c3c;
-  color: white;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
   border: none;
-  border-radius: 6px;
-  padding: 4px 8px;
+  background: #333;
+  color: white;
+  font-size: 16px;
   cursor: pointer;
+}
+
+/* Formulário */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+form input, form select {
+  padding: 12px;
+  border: 1px solid #999;
+  border-radius: 6px;
   font-size: 16px;
 }
 
-.delete-btn:hover {
-  background: #c0392b;
-}
-
-.clear-btn {
-  background: #555;
+.add-btn {
+  background: #0084ff;
   color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-.clear-btn:hover {
-  background: #333;
-}
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-th {
-  background: #f0f0f0;
-}
-.edit-btn, .delete-btn {
-  border: none;
-  border-radius: 6px;
-  padding: 5px 8px;
-  color: #fff;
-  cursor: pointer;
-  font-size: 14px;
-  margin: 0 2px;
-}
-
-.edit-btn {
-  background: #2ecc71;
-}
-
-.edit-btn:hover {
-  background: #27ae60;
-}
-
-.delete-btn {
-  background: #e74c3c;
-}
-
-.delete-btn:hover {
-  background: #c0392b;
-}
-/* Botão de tema */
-.theme-btn {
-  margin: 10px 0;
-  padding: 8px 15px;
+  padding: 12px;
   border-radius: 8px;
-  cursor: pointer;
-  background: #222;
-  color: #fff;
   border: none;
-  font-size: 14px;
+  cursor: pointer;
 }
 
-/* Tema escuro */
-.dark {
-  background-color: #1a1a1a;
-  color: #f1f1f1;
+/* Ações */
+.acoes {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
 }
 
-/* Inputs no modo escuro */
-.dark input,
-.dark select {
-  background-color: #333;
-  color: #fff;
-  border: 1px solid #555;
+.acoes input, .acoes button {
+  padding: 12px;
+  font-size: 16px;
 }
 
-/* Botões */
-.dark button {
-  background-color: #333;
-  color: #fff;
+/* Resumo */
+.comissoes {
+  margin-top: 15px;
+  padding: 10px;
+  background: #ddd;
+  border-radius: 8px;
+  font-size: 16px;
 }
 
 /* Tabela */
-.dark table {
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+}
+
+.edit-btn, .delete-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-size: 14px;
+}
+
+.edit-btn { background: #28a745; }
+.delete-btn { background: #e63946; }
+
+/* -------------------- */
+/* MODO ESCURO */
+/* -------------------- */
+.dark {
+  background: #121212;
+  color: white;
+}
+
+.dark input, .dark select {
   background: #222;
   color: #fff;
+  border-color: #444;
+}
+
+.dark table {
+  background: #1d1d1d;
 }
 
 .dark th {
@@ -140,16 +125,19 @@ th {
 }
 
 .dark td {
-  background: #222;
-  color: #e0e0e0;
-  border-color: #555;
+  background: #1a1a1a;
+  color: #eee;
 }
 
-/* Caixa de ações */
-.dark .acoes,
 .dark .comissoes {
-  background: #222;
-  border: 1px solid #444;
+  background: #1d1d1d;
+  border: 1px solid #333;
 }
 
+.dark .add-btn {
+  background: #005fcc;
+}
 
+.dark .theme-btn {
+  background: #005fcc;
+}
