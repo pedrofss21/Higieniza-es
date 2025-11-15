@@ -17,6 +17,7 @@ function atualizarTabela(filtroMes = null) {
     ? registros.filter(r => r.data.startsWith(filtroMes))
     : registros;
 
+
   filtrados.forEach((r, index) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
