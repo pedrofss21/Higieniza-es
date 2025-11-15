@@ -17,15 +17,6 @@ function atualizarTabela(filtroMes = null) {
     ? registros.filter(r => r.data.startsWith(filtroMes))
     : registros;
   
-    // --- Cálculo da comissão ---
-  const totalCarros = filtrados.length;
-  const totalComissao = totalCarros * 5;
-
-  document.getElementById('totalCarros').textContent = totalCarros;
-  document.getElementById('totalComissao').textContent = totalComissao.toFixed(2);
-
-
-
   filtrados.forEach((r, index) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -39,6 +30,13 @@ function atualizarTabela(filtroMes = null) {
       </td>
     `;
     tabela.appendChild(tr);
+       // --- Cálculo da comissão ---
+  const totalCarros = filtrados.length;
+  const totalComissao = totalCarros * 5;
+
+  document.getElementById('totalCarros').textContent = totalCarros;
+  document.getElementById('totalComissao').textContent = totalComissao.toFixed(2);
+
   });
 
   // eventos dos botões de excluir
