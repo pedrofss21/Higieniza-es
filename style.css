@@ -250,15 +250,5 @@ td:last-child {
 .dark .delete-btn {
   background: #c62828 !important;
 }
-.mes-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 12px;
-}
 
-.titulo-mes {
-  font-size: 15px;
-  font-weight: 600;
-}
 
