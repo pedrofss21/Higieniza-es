@@ -1,4 +1,4 @@
-# Sistema de Registro de Higienizações 🚗✨
+# Sistema de Registro de Higienizações 
 
 Este projeto é um sistema simples e eficiente para registrar higienizações e serviços automotivos, permitindo controle mensal, exportação em PDF, cálculo automático de comissões e salvamento local.  
 Ele foi desenvolvido utilizando **HTML, CSS e JavaScript puro**, funcionando 100% no navegador — tanto no PC quanto no celular.
