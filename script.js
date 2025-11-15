@@ -4,7 +4,7 @@ const mesSelecionado = document.getElementById('mesSelecionado');
 const { jsPDF } = window.jspdf;
 
 let registros = JSON.parse(localStorage.getItem('registros')) || [];
-let indiceEdicao = null; // guarda qual item deve ser editado
+let indiceEdicao = null;
 
 function salvarLocal() {
   localStorage.setItem('registros', JSON.stringify(registros));
@@ -17,9 +17,8 @@ function atualizarTabela(filtroMes = null) {
     ? registros.filter(r => r.data.startsWith(filtroMes))
     : registros;
 
-  // Montar tabela
   filtrados.forEach((r) => {
-    const indexReal = registros.indexOf(r); // índice real no array original
+    const indexReal = registros.indexOf(r);
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -35,14 +34,12 @@ function atualizarTabela(filtroMes = null) {
     tabela.appendChild(tr);
   });
 
-  // --- Cálculo da comissão (fora do loop) ---
   const totalCarros = filtrados.length;
   const totalComissao = totalCarros * 5;
 
   document.getElementById('totalCarros').textContent = totalCarros;
   document.getElementById('totalComissao').textContent = totalComissao.toFixed(2);
 
-  // Eventos de excluir
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       const index = e.target.getAttribute('data-index');
@@ -52,7 +49,6 @@ function atualizarTabela(filtroMes = null) {
     });
   });
 
-  // Eventos de editar
   document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       indiceEdicao = e.target.getAttribute('data-index');
@@ -79,12 +75,10 @@ form.addEventListener('submit', e => {
   };
 
   if (indiceEdicao !== null) {
-    // editar
     registros[indiceEdicao] = novo;
     indiceEdicao = null;
     form.querySelector('button[type="submit"]').textContent = 'Adicionar';
   } else {
-    // adicionar
     registros.push(novo);
   }
 
@@ -93,7 +87,6 @@ form.addEventListener('submit', e => {
   form.reset();
 });
 
-// Gerar PDF
 document.getElementById('gerarPDF').addEventListener('click', () => {
   const mes = mesSelecionado.value;
   if (!mes) return alert('Escolha um mês.');
@@ -103,11 +96,9 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
 
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-  // Título
   pdf.setFontSize(18);
   pdf.text(`Higienizações - ${mes}`, 105, 20, { align: 'center' });
 
-  // Tabela
   const colunas = ["Data", "Serviço", "Modelo", "Placa/Chassi"];
   const linhas = dados.map(r => [r.data, r.servico, r.modelo, r.placa]);
 
@@ -130,7 +121,6 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
     }
   });
 
-  // Comissões no PDF
   const totalCarros = dados.length;
   const totalComissao = totalCarros * 5;
 
@@ -156,40 +146,42 @@ mesSelecionado.addEventListener('change', () => {
   atualizarTabela(mesSelecionado.value);
 });
 
-// Botão "Apagar tudo"
+// Criar botão "Apagar tudo"
 const btnApagarTudo = document.createElement('button');
 btnApagarTudo.textContent = '🧹 Apagar tudo';
 btnApagarTudo.className = 'clear-btn';
+
 btnApagarTudo.addEventListener('click', () => {
   if (confirm('Tem certeza que deseja apagar todos os registros?')) {
     registros = [];
     salvarLocal();
     atualizarTabela();
   }
- // Alternância do tema
-const toggleTheme = document.getElementById("toggleTheme");
-
-// Aplicar tema salvo
-if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-    toggleTheme.textContent = "☀️ Modo Claro";
-}
-
-toggleTheme.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-
-    if (document.body.classList.contains("dark")) {
-        localStorage.setItem("theme", "dark");
-        toggleTheme.textContent = "☀️ Modo Claro";
-    } else {
-        localStorage.setItem("theme", "light");
-        toggleTheme.textContent = "🌙 Modo Escuro";
-    }
-});
-
 });
 
 document.querySelector('.acoes').appendChild(btnApagarTudo);
 
-// Inicialização
+/* ---------------------------
+      MODO ESCURO – CORRIGIDO
+----------------------------*/
+const toggleTheme = document.getElementById("toggleTheme");
+
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+  toggleTheme.textContent = "☀️ Modo Claro";
+}
+
+toggleTheme.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+
+  if (document.body.classList.contains("dark")) {
+    localStorage.setItem("theme", "dark");
+    toggleTheme.textContent = "☀️ Modo Claro";
+  } else {
+    localStorage.setItem("theme", "light");
+    toggleTheme.textContent = "🌙 Modo Escuro";
+  }
+});
+
+// Inicializar tabela
 atualizarTabela();
