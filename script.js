@@ -4,6 +4,7 @@ const mesSelecionado = document.getElementById('mesSelecionado');
 const { jsPDF } = window.jspdf;
 
 let registros = JSON.parse(localStorage.getItem('registros')) || [];
+let indiceEdicao = null; // novo: guarda qual item está sendo editado
 
 function salvarLocal() {
   localStorage.setItem('registros', JSON.stringify(registros));
@@ -23,18 +24,34 @@ function atualizarTabela(filtroMes = null) {
       <td>${r.servico}</td>
       <td>${r.modelo}</td>
       <td>${r.placa}</td>
-      <td><button class="delete-btn" data-index="${index}">🗑️</button></td>
+      <td>
+        <button class="edit-btn" data-index="${index}">✏️</button>
+        <button class="delete-btn" data-index="${index}">🗑️</button>
+      </td>
     `;
     tabela.appendChild(tr);
   });
 
-  // adiciona evento aos botões de exclusão
+  // eventos dos botões de excluir
   document.querySelectorAll('.delete-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', e => {
       const index = e.target.getAttribute('data-index');
       registros.splice(index, 1);
       salvarLocal();
       atualizarTabela(filtroMes);
+    });
+  });
+
+  // eventos dos botões de editar
+  document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      indiceEdicao = e.target.getAttribute('data-index');
+      const registro = registros[indiceEdicao];
+      document.getElementById('data').value = registro.data;
+      document.getElementById('servico').value = registro.servico;
+      document.getElementById('modelo').value = registro.modelo;
+      document.getElementById('placa').value = registro.placa;
+      form.querySelector('button[type="submit"]').textContent = '💾 Salvar Alterações';
     });
   });
 }
@@ -47,7 +64,17 @@ form.addEventListener('submit', e => {
     modelo: document.getElementById('modelo').value,
     placa: document.getElementById('placa').value
   };
-  registros.push(novo);
+
+  if (indiceEdicao !== null) {
+    // modo edição
+    registros[indiceEdicao] = novo;
+    indiceEdicao = null;
+    form.querySelector('button[type="submit"]').textContent = 'Adicionar';
+  } else {
+    // modo adicionar
+    registros.push(novo);
+  }
+
   salvarLocal();
   atualizarTabela();
   form.reset();
@@ -61,16 +88,9 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
   if (dados.length === 0) return alert('Nenhum registro nesse mês.');
 
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-  // Título
   pdf.setFontSize(18);
   pdf.text(`Higienizações - ${mes}`, 105, 20, { align: 'center' });
 
-  // Espaço antes da tabela
-  pdf.setFontSize(12);
-  pdf.text(`Relatório de serviços do mês ${mes}`, 14, 30);
-
-  // Montar tabela
   const colunas = ["Data", "Serviço", "Modelo", "Placa/Chassi"];
   const linhas = dados.map(r => [r.data, r.servico, r.modelo, r.placa]);
 
@@ -79,19 +99,12 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
     head: [colunas],
     body: linhas,
     theme: 'grid',
-    styles: {
-      fontSize: 11,
-      cellPadding: 3,
-      valign: 'middle'
-    },
     headStyles: {
-      fillColor: [40, 116, 240], // azul
+      fillColor: [40, 116, 240],
       textColor: 255,
       halign: 'center'
     },
-    bodyStyles: {
-      halign: 'center'
-    },
+    bodyStyles: { halign: 'center' },
     columnStyles: {
       0: { cellWidth: 30 },
       1: { cellWidth: 60 },
@@ -100,11 +113,6 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
     }
   });
 
-  // Rodapé
-  const dataAtual = new Date().toLocaleDateString('pt-BR');
-  pdf.setFontSize(10);
-  pdf.text(`Gerado em ${dataAtual}`, 14, pdf.internal.pageSize.height - 10);
-
   pdf.save(`higienizacoes-${mes}.pdf`);
 });
 
@@ -112,7 +120,7 @@ document.getElementById('mesSelecionado').addEventListener('change', () => {
   atualizarTabela(mesSelecionado.value);
 });
 
-// botão para apagar tudo
+// botão apagar tudo
 const btnApagarTudo = document.createElement('button');
 btnApagarTudo.textContent = '🧹 Apagar tudo';
 btnApagarTudo.className = 'clear-btn';
