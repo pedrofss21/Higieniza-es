@@ -96,4 +96,60 @@ th {
 .delete-btn:hover {
   background: #c0392b;
 }
+/* Botão de tema */
+.theme-btn {
+  margin: 10px 0;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #222;
+  color: #fff;
+  border: none;
+  font-size: 14px;
+}
+
+/* Tema escuro */
+.dark {
+  background-color: #1a1a1a;
+  color: #f1f1f1;
+}
+
+/* Inputs no modo escuro */
+.dark input,
+.dark select {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+/* Botões */
+.dark button {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Tabela */
+.dark table {
+  background: #222;
+  color: #fff;
+}
+
+.dark th {
+  background: #333;
+  color: #fff;
+}
+
+.dark td {
+  background: #222;
+  color: #e0e0e0;
+  border-color: #555;
+}
+
+/* Caixa de ações */
+.dark .acoes,
+.dark .comissoes {
+  background: #222;
+  border: 1px solid #444;
+}
+
 
