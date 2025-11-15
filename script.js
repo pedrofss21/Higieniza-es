@@ -16,6 +16,14 @@ function atualizarTabela(filtroMes = null) {
   const filtrados = filtroMes
     ? registros.filter(r => r.data.startsWith(filtroMes))
     : registros;
+  
+    // --- Cálculo da comissão ---
+  const totalCarros = filtrados.length;
+  const totalComissao = totalCarros * 5;
+
+  document.getElementById('totalCarros').textContent = totalCarros;
+  document.getElementById('totalComissao').textContent = totalComissao.toFixed(2);
+
 
 
   filtrados.forEach((r, index) => {
