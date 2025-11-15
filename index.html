@@ -4,62 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Higienizações</title>
-  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="container">
+
     <h1>Higienizações</h1>
+
+    <!-- Botão de tema -->
     <button id="toggleTheme" class="theme-btn">🌙 Modo Escuro</button>
+
+    <!-- Formulário -->
     <form id="form">
       <input type="date" id="data" required>
       <input type="text" id="servico" placeholder="Serviço" required>
+
       <select id="modelo">
         <option value="Novo">Novo</option>
         <option value="Semi-novo">Semi-novo</option>
       </select>
+
       <input type="text" id="placa" placeholder="Placa ou Chassi" required>
-      <button type="submit">Adicionar</button>
+
+      <button type="submit" class="add-btn">Adicionar</button>
     </form>
 
+    <!-- Filtros e ações -->
     <div class="acoes">
       <input type="month" id="mesSelecionado">
-      <button id="gerarPDF">Gerar PDF do Mês</button>
+      <button id="gerarPDF">Gerar PDF</button>
     </div>
-    
+
+    <!-- Resumo -->
     <div class="comissoes">
       <p>Total de carros: <span id="totalCarros">0</span></p>
       <p>Total em comissões: R$ <span id="totalComissao">0</span></p>
     </div>
 
-    
-<table id="tabela">
-  <thead>
-    <tr>
-      <th>Data</th>
-      <th>Serviço</th>
-      <th>Modelo</th>
-      <th>Placa/Chassi</th>
-      <th>Ações</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+    <!-- Tabela -->
+    <table id="tabela">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Serviço</th>
+          <th>Modelo</th>
+          <th>Placa/Chassi</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody> <!-- ESSENCIAL -->
+    </table>
 
   </main>
 
+  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.3/jspdf.plugin.autotable.min.js"></script>
   <script src="script.js"></script>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-  </script>
 </body>
 </html>
-
-
-
-
