@@ -95,9 +95,12 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
   if (dados.length === 0) return alert('Nenhum registro nesse mês.');
 
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  // Título
   pdf.setFontSize(18);
   pdf.text(`Higienizações - ${mes}`, 105, 20, { align: 'center' });
 
+  // Tabela
   const colunas = ["Data", "Serviço", "Modelo", "Placa/Chassi"];
   const linhas = dados.map(r => [r.data, r.servico, r.modelo, r.placa]);
 
@@ -120,8 +123,28 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
     }
   });
 
+  // --- Comissões ---
+  const totalCarros = dados.length;
+  const totalComissao = totalCarros * 5;
+
+  let y = pdf.lastAutoTable.finalY + 10;
+
+  pdf.setFontSize(14);
+  pdf.text("Resumo Financeiro", 14, y);
+  y += 8;
+
+  pdf.setFontSize(12);
+  pdf.text(`Total de carros higienizados: ${totalCarros}`, 14, y);
+  y += 7;
+
+  pdf.text(`Comissão por carro: R$ 5,00`, 14, y);
+  y += 7;
+
+  pdf.text(`Total em comissões: R$ ${totalComissao.toFixed(2)}`, 14, y);
+
   pdf.save(`higienizacoes-${mes}.pdf`);
 });
+
 
 document.getElementById('mesSelecionado').addEventListener('change', () => {
   atualizarTabela(mesSelecionado.value);
