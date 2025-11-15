@@ -166,25 +166,25 @@ btnApagarTudo.addEventListener('click', () => {
     salvarLocal();
     atualizarTabela();
   }
-  // Alternância entre claro e escuro
+ // Alternância do tema
 const toggleTheme = document.getElementById("toggleTheme");
 
-// Verificar tema salvo
+// Aplicar tema salvo
 if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark");
-  toggleTheme.textContent = "☀️ Modo Claro";
+    document.body.classList.add("dark");
+    toggleTheme.textContent = "☀️ Modo Claro";
 }
 
 toggleTheme.addEventListener("click", () => {
-  document.body.classList.toggle("dark");
+    document.body.classList.toggle("dark");
 
-  if (document.body.classList.contains("dark")) {
-    toggleTheme.textContent = "☀️ Modo Claro";
-    localStorage.setItem("theme", "dark");
-  } else {
-    toggleTheme.textContent = "🌙 Modo Escuro";
-    localStorage.setItem("theme", "light");
-  }
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+        toggleTheme.textContent = "☀️ Modo Claro";
+    } else {
+        localStorage.setItem("theme", "light");
+        toggleTheme.textContent = "🌙 Modo Escuro";
+    }
 });
 
 });
