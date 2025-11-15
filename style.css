@@ -1,143 +1,252 @@
-/* Geral */
+/* ------------------------------- */
+/* CONFIGURAÇÃO GERAL */
+/* ------------------------------- */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   font-family: Arial, sans-serif;
   background: #f4f4f4;
-  margin: 0;
-  padding: 0;
+  padding: 15px;
+  color: #333;
 }
 
 .container {
-  width: 95%;
+  width: 100%;
+  max-width: 520px;
   margin: auto;
-  max-width: 540px;
 }
+
+
+/* ------------------------------- */
+/* TÍTULO */
+/* ------------------------------- */
 
 h1 {
   text-align: center;
-  margin-top: 15px;
+  margin-bottom: 15px;
+  font-size: 26px;
 }
 
-/* Botão tema */
+
+/* ------------------------------- */
+/* BOTÃO DE TEMA */
+/* ------------------------------- */
+
 .theme-btn {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
-  background: #333;
+  background: #222;
   color: white;
   font-size: 16px;
   cursor: pointer;
+  margin-bottom: 15px;
 }
 
-/* Formulário */
+
+/* ------------------------------- */
+/* FORMULÁRIO */
+/* ------------------------------- */
+
 form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-form input, form select {
-  padding: 12px;
-  border: 1px solid #999;
-  border-radius: 6px;
+form input,
+form select {
+  padding: 14px;
   font-size: 16px;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  background: white;
 }
 
 .add-btn {
-  background: #0084ff;
+  padding: 14px;
+  background: #007bff;
+  border: none;
   color: white;
-  padding: 12px;
   border-radius: 8px;
+  font-size: 17px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.add-btn:hover {
+  background: #0066d6;
+}
+
+
+/* ------------------------------- */
+/* AÇÕES */
+/* ------------------------------- */
+
+.acoes {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.acoes input,
+.acoes button {
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+#gerarPDF {
+  background: #28a745;
+  color: white;
   border: none;
   cursor: pointer;
 }
 
-/* Ações */
-.acoes {
-  margin-top: 15px;
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
+#gerarPDF:hover {
+  background: #1f8839;
 }
 
-.acoes input, .acoes button {
-  padding: 12px;
-  font-size: 16px;
-}
 
-/* Resumo */
+/* ------------------------------- */
+/* RESUMO */
+/* ------------------------------- */
+
 .comissoes {
-  margin-top: 15px;
-  padding: 10px;
+  margin-top: 20px;
+  padding: 12px;
   background: #ddd;
   border-radius: 8px;
   font-size: 16px;
 }
 
-/* Tabela */
+.comissoes p {
+  margin-bottom: 5px;
+}
+
+
+/* ------------------------------- */
+/* TABELA */
+/* ------------------------------- */
+
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
-  font-size: 14px;
+  margin-top: 20px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background: #007bff;
+  color: white;
 }
 
 th, td {
-  padding: 10px;
+  padding: 12px;
+  font-size: 14px;
   text-align: center;
   border-bottom: 1px solid #ccc;
 }
 
-.edit-btn, .delete-btn {
+td:last-child {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+
+/* ------------------------------- */
+/* BOTÕES DE AÇÃO */
+/* ------------------------------- */
+
+.edit-btn,
+.delete-btn {
   padding: 6px 10px;
+  color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  color: white;
   font-size: 14px;
 }
 
-.edit-btn { background: #28a745; }
-.delete-btn { background: #e63946; }
+.edit-btn {
+  background: #28a745;
+}
 
-/* -------------------- */
+.delete-btn {
+  background: #e63946;
+}
+
+
+/* ------------------------------- */
 /* MODO ESCURO */
-/* -------------------- */
+/* ------------------------------- */
+
 .dark {
-  background: #121212;
-  color: white;
+  background: #121212 !important;
+  color: #ffffff !important;
 }
 
-.dark input, .dark select {
-  background: #222;
-  color: #fff;
-  border-color: #444;
+/* Inputs */
+.dark input,
+.dark select {
+  background: #222 !important;
+  color: #fff !important;
+  border-color: #555 !important;
 }
 
+/* Botões */
+.dark button {
+  background: #333 !important;
+  color: #fff !important;
+}
+
+/* Botão Adicionar */
+.dark .add-btn {
+  background: #005dcc !important;
+}
+
+/* Ações */
+.dark .acoes button {
+  background: #333 !important;
+  color: #fff !important;
+}
+
+/* Resumo */
+.dark .comissoes {
+  background: #1d1d1d !important;
+  border-color: #333 !important;
+}
+
+/* Tabela */
 .dark table {
-  background: #1d1d1d;
+  background: #1e1e1e !important;
+  color: #fff !important;
 }
 
 .dark th {
-  background: #333;
-  color: #fff;
+  background: #333 !important;
 }
 
 .dark td {
-  background: #1a1a1a;
-  color: #eee;
+  background: #1a1a1a !important;
+  color: #eee !important;
 }
 
-.dark .comissoes {
-  background: #1d1d1d;
-  border: 1px solid #333;
+/* Botões editar/excluir */
+.dark .edit-btn {
+  background: #1f8839 !important;
 }
 
-.dark .add-btn {
-  background: #005fcc;
-}
-
-.dark .theme-btn {
-  background: #005fcc;
+.dark .delete-btn {
+  background: #c62828 !important;
 }
