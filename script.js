@@ -4,7 +4,7 @@ const mesSelecionado = document.getElementById('mesSelecionado');
 const { jsPDF } = window.jspdf;
 
 let registros = JSON.parse(localStorage.getItem('registros')) || [];
-let indiceEdicao = null; // novo: guarda qual item está sendo editado
+let indiceEdicao = null; // guarda qual item deve ser editado
 
 function salvarLocal() {
   localStorage.setItem('registros', JSON.stringify(registros));
@@ -16,8 +16,11 @@ function atualizarTabela(filtroMes = null) {
   const filtrados = filtroMes
     ? registros.filter(r => r.data.startsWith(filtroMes))
     : registros;
-  
-  filtrados.forEach((r, index) => {
+
+  // Montar tabela
+  filtrados.forEach((r) => {
+    const indexReal = registros.indexOf(r); // índice real no array original
+
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${r.data}</td>
@@ -25,21 +28,21 @@ function atualizarTabela(filtroMes = null) {
       <td>${r.modelo}</td>
       <td>${r.placa}</td>
       <td>
-        <button class="edit-btn" data-index="${index}">✏️</button>
-        <button class="delete-btn" data-index="${index}">🗑️</button>
+        <button class="edit-btn" data-index="${indexReal}">✏️</button>
+        <button class="delete-btn" data-index="${indexReal}">🗑️</button>
       </td>
     `;
     tabela.appendChild(tr);
-       // --- Cálculo da comissão ---
+  });
+
+  // --- Cálculo da comissão (fora do loop) ---
   const totalCarros = filtrados.length;
   const totalComissao = totalCarros * 5;
 
   document.getElementById('totalCarros').textContent = totalCarros;
   document.getElementById('totalComissao').textContent = totalComissao.toFixed(2);
 
-  });
-
-  // eventos dos botões de excluir
+  // Eventos de excluir
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       const index = e.target.getAttribute('data-index');
@@ -49,15 +52,17 @@ function atualizarTabela(filtroMes = null) {
     });
   });
 
-  // eventos dos botões de editar
+  // Eventos de editar
   document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       indiceEdicao = e.target.getAttribute('data-index');
       const registro = registros[indiceEdicao];
+
       document.getElementById('data').value = registro.data;
       document.getElementById('servico').value = registro.servico;
       document.getElementById('modelo').value = registro.modelo;
       document.getElementById('placa').value = registro.placa;
+
       form.querySelector('button[type="submit"]').textContent = '💾 Salvar Alterações';
     });
   });
@@ -65,6 +70,7 @@ function atualizarTabela(filtroMes = null) {
 
 form.addEventListener('submit', e => {
   e.preventDefault();
+
   const novo = {
     data: document.getElementById('data').value,
     servico: document.getElementById('servico').value,
@@ -73,12 +79,12 @@ form.addEventListener('submit', e => {
   };
 
   if (indiceEdicao !== null) {
-    // modo edição
+    // editar
     registros[indiceEdicao] = novo;
     indiceEdicao = null;
     form.querySelector('button[type="submit"]').textContent = 'Adicionar';
   } else {
-    // modo adicionar
+    // adicionar
     registros.push(novo);
   }
 
@@ -87,6 +93,7 @@ form.addEventListener('submit', e => {
   form.reset();
 });
 
+// Gerar PDF
 document.getElementById('gerarPDF').addEventListener('click', () => {
   const mes = mesSelecionado.value;
   if (!mes) return alert('Escolha um mês.');
@@ -123,7 +130,7 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
     }
   });
 
-  // --- Comissões ---
+  // Comissões no PDF
   const totalCarros = dados.length;
   const totalComissao = totalCarros * 5;
 
@@ -145,12 +152,11 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
   pdf.save(`higienizacoes-${mes}.pdf`);
 });
 
-
-document.getElementById('mesSelecionado').addEventListener('change', () => {
+mesSelecionado.addEventListener('change', () => {
   atualizarTabela(mesSelecionado.value);
 });
 
-// botão apagar tudo
+// Botão "Apagar tudo"
 const btnApagarTudo = document.createElement('button');
 btnApagarTudo.textContent = '🧹 Apagar tudo';
 btnApagarTudo.className = 'clear-btn';
@@ -161,6 +167,8 @@ btnApagarTudo.addEventListener('click', () => {
     atualizarTabela();
   }
 });
+
 document.querySelector('.acoes').appendChild(btnApagarTudo);
 
+// Inicialização
 atualizarTabela();
