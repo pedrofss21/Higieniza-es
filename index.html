@@ -16,13 +16,31 @@
 
     <!-- Formulário -->
     <form id="form">
-      <input type="date" id="data" required>
-      <input type="text" id="servico" placeholder="Serviço" required>
 
-      <select id="modelo">
-        <option value="Novo">Novo</option>
-        <option value="Semi-novo">Semi-novo</option>
-      </select>
+      <input type="date" id="data" required>
+
+      <!-- SERVIÇO EM BOTÕES -->
+      <div class="grupo-servico">
+        <label>Serviço:</label>
+        <button type="button" class="btn-servico" data-servico="Polimento">Polimento</button>
+        <button type="button" class="btn-servico" data-servico="Higienização">Higienização</button>
+      </div>
+
+      <!-- Campo oculto para salvar -->
+      <input type="hidden" id="servico" required>
+
+      <!-- TIPO DO VEÍCULO EM BOTÕES -->
+      <div class="grupo-tipo">
+        <label>Tipo do veículo:</label>
+        <button type="button" class="btn-tipo" data-tipo="Novo">Novo</button>
+        <button type="button" class="btn-tipo" data-tipo="Semi-novo">Semi-novo</button>
+      </div>
+
+      <!-- Campo oculto -->
+      <input type="hidden" id="tipoVeiculo" required>
+
+      <!-- Comissão automática -->
+      <p id="previewComissao">Comissão: R$ 0,00</p>
 
       <input type="text" id="placa" placeholder="Placa ou Chassi" required>
 
@@ -40,8 +58,6 @@
       <p>Total de carros: <span id="totalCarros">0</span></p>
       <p>Total em comissões: R$ <span id="totalComissao">0</span></p>
     </div>
-    
-    
 
     <!-- Tabela -->
     <table id="tabela">
@@ -49,12 +65,13 @@
         <tr>
           <th>Data</th>
           <th>Serviço</th>
-          <th>Modelo</th>
+          <th>Tipo</th>
           <th>Placa/Chassi</th>
+          <th>Comissão</th>
           <th>Ações</th>
         </tr>
       </thead>
-      <tbody></tbody> <!-- ESSENCIAL -->
+      <tbody></tbody>
     </table>
 
   </main>
@@ -66,5 +83,3 @@
 
 </body>
 </html>
-
-
