@@ -7,7 +7,7 @@ let registros = JSON.parse(localStorage.getItem('registros')) || [];
 let indiceEdicao = null;
 
 /* ================================
-   REGRA DE COMISSÃO (NOVA)
+   REGRA DE COMISSÃO
 ================================ */
 
 function calcularComissao(servico, tipoVeiculo) {
@@ -25,7 +25,58 @@ function calcularComissao(servico, tipoVeiculo) {
 }
 
 /* ================================
-   SALVAR LOCALSTORAGE
+   CONTROLE DOS BOTÕES
+================================ */
+
+const botoesServico = document.querySelectorAll('.btn-servico');
+const botoesTipo = document.querySelectorAll('.btn-tipo');
+
+const campoServico = document.getElementById('servico');
+const campoTipo = document.getElementById('tipoVeiculo');
+const previewComissao = document.getElementById('previewComissao');
+
+let servicoSelecionado = null;
+let tipoSelecionado = null;
+
+botoesServico.forEach(btn => {
+  btn.addEventListener('click', () => {
+
+    botoesServico.forEach(b => b.classList.remove('ativo'));
+    btn.classList.add('ativo');
+
+    servicoSelecionado = btn.dataset.servico;
+    campoServico.value = servicoSelecionado;
+
+    atualizarPreview();
+  });
+});
+
+botoesTipo.forEach(btn => {
+  btn.addEventListener('click', () => {
+
+    botoesTipo.forEach(b => b.classList.remove('ativo'));
+    btn.classList.add('ativo');
+
+    tipoSelecionado = btn.dataset.tipo;
+    campoTipo.value = tipoSelecionado;
+
+    atualizarPreview();
+  });
+});
+
+function atualizarPreview() {
+
+  if (!servicoSelecionado || !tipoSelecionado) {
+    previewComissao.textContent = "Comissão: R$ 0,00";
+    return;
+  }
+
+  const valor = calcularComissao(servicoSelecionado, tipoSelecionado);
+  previewComissao.textContent = `Comissão: R$ ${valor.toFixed(2)}`;
+}
+
+/* ================================
+   SALVAR LOCAL
 ================================ */
 
 function salvarLocal() {
@@ -73,10 +124,7 @@ function atualizarTabela(filtroMes = null) {
   document.getElementById('totalCarros').textContent = totalCarros;
   document.getElementById('totalComissao').textContent = totalComissao.toFixed(2);
 
-  /* ================================
-     DELETE
-  ================================ */
-
+  /* DELETE */
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       const index = e.target.getAttribute('data-index');
@@ -86,10 +134,7 @@ function atualizarTabela(filtroMes = null) {
     });
   });
 
-  /* ================================
-     EDITAR
-  ================================ */
-
+  /* EDITAR */
   document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', e => {
 
@@ -97,9 +142,23 @@ function atualizarTabela(filtroMes = null) {
       const registro = registros[indiceEdicao];
 
       document.getElementById('data').value = registro.data;
-      document.getElementById('servico').value = registro.servico;
-      document.getElementById('tipoVeiculo').value = registro.tipoVeiculo;
       document.getElementById('placa').value = registro.placa;
+
+      servicoSelecionado = registro.servico;
+      tipoSelecionado = registro.tipoVeiculo;
+
+      campoServico.value = servicoSelecionado;
+      campoTipo.value = tipoSelecionado;
+
+      botoesServico.forEach(b => {
+        b.classList.toggle('ativo', b.dataset.servico === servicoSelecionado);
+      });
+
+      botoesTipo.forEach(b => {
+        b.classList.toggle('ativo', b.dataset.tipo === tipoSelecionado);
+      });
+
+      atualizarPreview();
 
       form.querySelector('button[type="submit"]').textContent = '💾 Salvar Alterações';
     });
@@ -115,16 +174,19 @@ form.addEventListener('submit', e => {
   e.preventDefault();
 
   const data = document.getElementById('data').value;
-  const servico = document.getElementById('servico').value;
-  const tipoVeiculo = document.getElementById('tipoVeiculo').value;
   const placa = document.getElementById('placa').value;
 
-  const comissao = calcularComissao(servico, tipoVeiculo);
+  if (!servicoSelecionado || !tipoSelecionado) {
+    alert("Selecione o serviço e o tipo do veículo.");
+    return;
+  }
+
+  const comissao = calcularComissao(servicoSelecionado, tipoSelecionado);
 
   const novo = {
     data,
-    servico,
-    tipoVeiculo,
+    servico: servicoSelecionado,
+    tipoVeiculo: tipoSelecionado,
     placa,
     comissao
   };
@@ -140,6 +202,16 @@ form.addEventListener('submit', e => {
   salvarLocal();
   atualizarTabela(mesSelecionado.value);
   form.reset();
+
+  servicoSelecionado = null;
+  tipoSelecionado = null;
+  campoServico.value = '';
+  campoTipo.value = '';
+
+  botoesServico.forEach(b => b.classList.remove('ativo'));
+  botoesTipo.forEach(b => b.classList.remove('ativo'));
+
+  previewComissao.textContent = "Comissão: R$ 0,00";
 });
 
 /* ================================
@@ -157,7 +229,7 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
   pdf.setFontSize(18);
-  pdf.text(`Higienizações - ${mes}`, 105, 20, { align: 'center' });
+  pdf.text(`Relatório - ${mes}`, 105, 20, { align: 'center' });
 
   const colunas = ["Data", "Serviço", "Tipo", "Placa/Chassi", "Comissão"];
   const linhas = dados.map(r => [
@@ -172,13 +244,7 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
     startY: 35,
     head: [colunas],
     body: linhas,
-    theme: 'grid',
-    headStyles: {
-      fillColor: [40, 116, 240],
-      textColor: 255,
-      halign: 'center'
-    },
-    bodyStyles: { halign: 'center' }
+    theme: 'grid'
   });
 
   let totalComissao = 0;
@@ -190,49 +256,20 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
 
   let y = pdf.lastAutoTable.finalY + 10;
 
-  pdf.setFontSize(14);
-  pdf.text("Resumo Financeiro", 14, y);
-  y += 8;
-
   pdf.setFontSize(12);
   pdf.text(`Total de carros: ${totalCarros}`, 14, y);
   y += 7;
-
   pdf.text(`Total em comissões: R$ ${totalComissao.toFixed(2)}`, 14, y);
 
-  pdf.save(`higienizacoes-${mes}.pdf`);
+  pdf.save(`relatorio-${mes}.pdf`);
 });
 
-/* ================================
-   FILTRO POR MÊS
-================================ */
-
+/* FILTRO */
 mesSelecionado.addEventListener('change', () => {
   atualizarTabela(mesSelecionado.value);
 });
 
-/* ================================
-   APAGAR TUDO
-================================ */
-
-const btnApagarTudo = document.createElement('button');
-btnApagarTudo.textContent = '🧹 Apagar tudo';
-btnApagarTudo.className = 'clear-btn';
-
-btnApagarTudo.addEventListener('click', () => {
-  if (confirm('Tem certeza que deseja apagar todos os registros?')) {
-    registros = [];
-    salvarLocal();
-    atualizarTabela();
-  }
-});
-
-document.querySelector('.acoes').appendChild(btnApagarTudo);
-
-/* ================================
-   MODO ESCURO
-================================ */
-
+/* MODO ESCURO */
 const toggleTheme = document.getElementById("toggleTheme");
 
 if (localStorage.getItem("theme") === "dark") {
@@ -252,8 +289,5 @@ toggleTheme.addEventListener("click", () => {
   }
 });
 
-/* ================================
-   INICIALIZAÇÃO
-================================ */
-
+/* INICIALIZAÇÃO */
 atualizarTabela();
