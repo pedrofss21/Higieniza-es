@@ -36,6 +36,25 @@ function atualizarTabela(filtroMes = null) {
 
   const totalCarros = filtrados.length;
   const totalComissao = totalCarros * 5;
+  
+  function calcularComissao(servico, tipoVeiculo) {
+
+    if (servico === "Higienização") {
+        return 5;
+    }
+
+    if (servico === "Polimento") {
+        if (tipoVeiculo === "Novo") {
+            return 5;
+        }
+
+        if (tipoVeiculo === "Semi-novo") {
+            return 10;
+        }
+    }
+
+    return 0;
+}
 
   document.getElementById('totalCarros').textContent = totalCarros;
   document.getElementById('totalComissao').textContent = totalComissao.toFixed(2);
