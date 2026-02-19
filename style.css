@@ -251,4 +251,51 @@ td:last-child {
   background: #c62828 !important;
 }
 
+/* ------------------------------- */
+/* BOTÕES DE SERVIÇO E TIPO */
+/* ------------------------------- */
+
+.grupo-servico,
+.grupo-tipo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.grupo-servico label,
+.grupo-tipo label {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.btn-servico,
+.btn-tipo {
+  padding: 12px;
+  border: 2px solid #007bff;
+  background: white;
+  color: #007bff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s ease-in-out;
+}
+
+.btn-servico:hover,
+.btn-tipo:hover {
+  background: #e9f2ff;
+}
+
+.btn-servico.ativo,
+.btn-tipo.ativo {
+  background: #007bff;
+  color: white;
+}
+
+/* Comissão preview */
+#previewComissao {
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 5px;
+  text-align: center;
+}
 
