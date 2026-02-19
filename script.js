@@ -6,11 +6,38 @@ const { jsPDF } = window.jspdf;
 let registros = JSON.parse(localStorage.getItem('registros')) || [];
 let indiceEdicao = null;
 
+/* ================================
+   REGRA DE COMISSÃO (NOVA)
+================================ */
+
+function calcularComissao(servico, tipoVeiculo) {
+
+  if (servico === "Higienização") {
+    return 5;
+  }
+
+  if (servico === "Polimento") {
+    if (tipoVeiculo === "Novo") return 5;
+    if (tipoVeiculo === "Semi-novo") return 10;
+  }
+
+  return 0;
+}
+
+/* ================================
+   SALVAR LOCALSTORAGE
+================================ */
+
 function salvarLocal() {
   localStorage.setItem('registros', JSON.stringify(registros));
 }
 
+/* ================================
+   ATUALIZAR TABELA
+================================ */
+
 function atualizarTabela(filtroMes = null) {
+
   tabela.innerHTML = '';
 
   const filtrados = filtroMes
@@ -18,14 +45,16 @@ function atualizarTabela(filtroMes = null) {
     : registros;
 
   filtrados.forEach((r) => {
+
     const indexReal = registros.indexOf(r);
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${r.data}</td>
       <td>${r.servico}</td>
-      <td>${r.modelo}</td>
+      <td>${r.tipoVeiculo}</td>
       <td>${r.placa}</td>
+      <td>R$ ${(r.comissao || 5).toFixed(2)}</td>
       <td>
         <button class="edit-btn" data-index="${indexReal}">✏️</button>
         <button class="delete-btn" data-index="${indexReal}">🗑️</button>
@@ -35,29 +64,18 @@ function atualizarTabela(filtroMes = null) {
   });
 
   const totalCarros = filtrados.length;
-  const totalComissao = totalCarros * 5;
-  
-  function calcularComissao(servico, tipoVeiculo) {
 
-    if (servico === "Higienização") {
-        return 5;
-    }
-
-    if (servico === "Polimento") {
-        if (tipoVeiculo === "Novo") {
-            return 5;
-        }
-
-        if (tipoVeiculo === "Semi-novo") {
-            return 10;
-        }
-    }
-
-    return 0;
-}
+  let totalComissao = 0;
+  filtrados.forEach(r => {
+    totalComissao += r.comissao || 5;
+  });
 
   document.getElementById('totalCarros').textContent = totalCarros;
   document.getElementById('totalComissao').textContent = totalComissao.toFixed(2);
+
+  /* ================================
+     DELETE
+  ================================ */
 
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -68,14 +86,19 @@ function atualizarTabela(filtroMes = null) {
     });
   });
 
+  /* ================================
+     EDITAR
+  ================================ */
+
   document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', e => {
+
       indiceEdicao = e.target.getAttribute('data-index');
       const registro = registros[indiceEdicao];
 
       document.getElementById('data').value = registro.data;
       document.getElementById('servico').value = registro.servico;
-      document.getElementById('modelo').value = registro.modelo;
+      document.getElementById('tipoVeiculo').value = registro.tipoVeiculo;
       document.getElementById('placa').value = registro.placa;
 
       form.querySelector('button[type="submit"]').textContent = '💾 Salvar Alterações';
@@ -83,14 +106,27 @@ function atualizarTabela(filtroMes = null) {
   });
 }
 
+/* ================================
+   ADICIONAR / EDITAR
+================================ */
+
 form.addEventListener('submit', e => {
+
   e.preventDefault();
 
+  const data = document.getElementById('data').value;
+  const servico = document.getElementById('servico').value;
+  const tipoVeiculo = document.getElementById('tipoVeiculo').value;
+  const placa = document.getElementById('placa').value;
+
+  const comissao = calcularComissao(servico, tipoVeiculo);
+
   const novo = {
-    data: document.getElementById('data').value,
-    servico: document.getElementById('servico').value,
-    modelo: document.getElementById('modelo').value,
-    placa: document.getElementById('placa').value
+    data,
+    servico,
+    tipoVeiculo,
+    placa,
+    comissao
   };
 
   if (indiceEdicao !== null) {
@@ -102,11 +138,16 @@ form.addEventListener('submit', e => {
   }
 
   salvarLocal();
-  atualizarTabela();
+  atualizarTabela(mesSelecionado.value);
   form.reset();
 });
 
+/* ================================
+   GERAR PDF
+================================ */
+
 document.getElementById('gerarPDF').addEventListener('click', () => {
+
   const mes = mesSelecionado.value;
   if (!mes) return alert('Escolha um mês.');
 
@@ -118,8 +159,14 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
   pdf.setFontSize(18);
   pdf.text(`Higienizações - ${mes}`, 105, 20, { align: 'center' });
 
-  const colunas = ["Data", "Serviço", "Modelo", "Placa/Chassi"];
-  const linhas = dados.map(r => [r.data, r.servico, r.modelo, r.placa]);
+  const colunas = ["Data", "Serviço", "Tipo", "Placa/Chassi", "Comissão"];
+  const linhas = dados.map(r => [
+    r.data,
+    r.servico,
+    r.tipoVeiculo,
+    r.placa,
+    `R$ ${(r.comissao || 5).toFixed(2)}`
+  ]);
 
   pdf.autoTable({
     startY: 35,
@@ -131,17 +178,15 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
       textColor: 255,
       halign: 'center'
     },
-    bodyStyles: { halign: 'center' },
-    columnStyles: {
-      0: { cellWidth: 30 },
-      1: { cellWidth: 60 },
-      2: { cellWidth: 35 },
-      3: { cellWidth: 50 }
-    }
+    bodyStyles: { halign: 'center' }
+  });
+
+  let totalComissao = 0;
+  dados.forEach(r => {
+    totalComissao += r.comissao || 5;
   });
 
   const totalCarros = dados.length;
-  const totalComissao = totalCarros * 5;
 
   let y = pdf.lastAutoTable.finalY + 10;
 
@@ -150,10 +195,7 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
   y += 8;
 
   pdf.setFontSize(12);
-  pdf.text(`Total de carros higienizados: ${totalCarros}`, 14, y);
-  y += 7;
-
-  pdf.text(`Comissão por carro: R$ 5,00`, 14, y);
+  pdf.text(`Total de carros: ${totalCarros}`, 14, y);
   y += 7;
 
   pdf.text(`Total em comissões: R$ ${totalComissao.toFixed(2)}`, 14, y);
@@ -161,11 +203,18 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
   pdf.save(`higienizacoes-${mes}.pdf`);
 });
 
+/* ================================
+   FILTRO POR MÊS
+================================ */
+
 mesSelecionado.addEventListener('change', () => {
   atualizarTabela(mesSelecionado.value);
 });
 
-// Criar botão "Apagar tudo"
+/* ================================
+   APAGAR TUDO
+================================ */
+
 const btnApagarTudo = document.createElement('button');
 btnApagarTudo.textContent = '🧹 Apagar tudo';
 btnApagarTudo.className = 'clear-btn';
@@ -180,9 +229,10 @@ btnApagarTudo.addEventListener('click', () => {
 
 document.querySelector('.acoes').appendChild(btnApagarTudo);
 
-/* ---------------------------
-      MODO ESCURO – CORRIGIDO
-----------------------------*/
+/* ================================
+   MODO ESCURO
+================================ */
+
 const toggleTheme = document.getElementById("toggleTheme");
 
 if (localStorage.getItem("theme") === "dark") {
@@ -202,5 +252,8 @@ toggleTheme.addEventListener("click", () => {
   }
 });
 
-// Inicializar tabela
+/* ================================
+   INICIALIZAÇÃO
+================================ */
+
 atualizarTabela();
