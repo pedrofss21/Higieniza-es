@@ -12,13 +12,22 @@ let indiceEdicao = null;
 
 function calcularComissao(servico, tipoVeiculo) {
 
+  // Higienização
   if (servico === "Higienização") {
-    return 5;
+    return 7;
   }
 
+  // Polimento
   if (servico === "Polimento") {
-    if (tipoVeiculo === "Novo") return 5;
-    if (tipoVeiculo === "Semi-novo") return 10;
+
+    if (tipoVeiculo === "Novo") {
+      return 5;
+    }
+
+    if (tipoVeiculo === "Semi-novo") {
+      return 10;
+    }
+
   }
 
   return 0;
