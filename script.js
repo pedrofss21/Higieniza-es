@@ -14,14 +14,14 @@ function calcularComissao(servico, tipoVeiculo) {
 
   // Higienização
   if (servico === "Higienização") {
-    return 7;
+    return 10;
   }
 
   // Polimento
   if (servico === "Polimento") {
 
     if (tipoVeiculo === "Novo") {
-      return 5;
+      return 10;
     }
 
     if (tipoVeiculo === "Semi-novo") {
